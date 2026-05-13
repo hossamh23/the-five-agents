@@ -6,3 +6,4 @@
 # Obsidian — per-user UI state, should not be shared
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
+.obsidian/graph.json

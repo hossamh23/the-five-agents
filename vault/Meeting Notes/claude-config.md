@@ -12,7 +12,7 @@ tags: [claude-code, config, infra]
 תיקיית `.claude/` היא התשתית של Claude Code בפרויקט. היא מחזיקה ארבעה רכיבים:
 
 - **`settings.local.json`** — קונפיגורציה מקומית (לא משותפת ב-git לרוב), בעיקר רשימת ה-permissions שאושרו ב-bash. שמור ל-Read.
-- **`agents/`** — הגדרות סוכנים מותאמים אישית (יעל/יובל/חן). **כרגע ריק**.
+- **`agents/`** — הגדרות סוכנים מותאמים אישית: `yael.md`, `yuval.md`, `chen.md`. ראה [[team-structure]] לפרטים על תוכן ההגדרות.
 - **`commands/`** — סלאש-קומנדים מותאמים. **כרגע ריק**.
 - **`skills/`** — סקילים שניתן להפעיל דרך כלי ה-Skill. **17 סקילים מותקנים**: 14 מ-Superpowers + 3 של Obsidian.
 
@@ -24,7 +24,7 @@ tags: [claude-code, config, infra]
 | קובץ / תיקייה | תפקיד | בעלים |
 |---|---|---|
 | `.claude/settings.local.json` | הרשאות bash מקומיות | ראובן |
-| `.claude/agents/` | (ריק) הגדרות יעל/יובל/חן | ראובן |
+| `.claude/agents/{yael,yuval,chen}.md` | system prompts של הסוכנים | ראובן (עורך) + הסוכן הרלוונטי |
 | `.claude/commands/` | (ריק) סלאש-קומנדים | ראובן |
 | `.claude/skills/` | 17 סקילים מותקנים | כל הצוות |
 
