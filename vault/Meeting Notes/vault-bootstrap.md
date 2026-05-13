@@ -23,7 +23,7 @@ vault/
 
 כל תיקייה כוללת `_index.md` שמרכז את ה-topics שבה עם תיאור בשורה.
 
-### מה נוצר בסשן הראשון (2026-05-13)
+#### מה נוצר בסשן הראשון (2026-05-13)
 
 קבצי topic תחת `vault/Meeting Notes/`:
 
@@ -39,7 +39,6 @@ vault/
 
 ## Open Questions
 
-- האם להחיל את הפרוטוקול אוטומטית בכל הפעלת Claude Code? — דורש הוק ב-`settings.json` (raאה ההערה לראובן בסוף הסשן הזה).
 - כשמתחיל פיתוח קוד אמיתי — להוסיף `vault/Decisions/` או להישאר עם Meeting Notes?
 - האם כדאי `topics.base` שיציג את כל ה-topics לפי frontmatter? (`obsidian-bases`)
 
@@ -47,6 +46,12 @@ vault/
 
 ### 2026-05-13 — אתחול ה-vault ובניית מפת הקבצים [shipped]
 - **What was done:** סריקת כל הפרויקט (`CLAUDE.md`, `.env*`, `.gitignore`, `.claude/`, 17 skills). יצירת `vault/Meeting Notes/` עם 7 topic files ו-`_index.md` ראשי. יצירת `_index.md` placeholders ב-Content Briefs / Publishing Log / Brand Guidelines. כל topic file כולל frontmatter (owner, area, tags), Overview, Open Questions, ו-Session Log לפי הפרוטוקול.
+
+### 2026-05-13 — פוש ה-vault ל-GitHub + הוק לאוטומציה [shipped]
+- **What was done:** ה-vault כולו + `.obsidian/` + 3 סקילי Obsidian + `.claude/settings.json` (עם hook ל-`UserPromptSubmit`) נדחפו ל-`origin/main` בקומיט `385471c`. ה-hook מזריק תזכורת בכל בקשת משתמש להפעיל את `obsidian-vault-workflow`.
+- **Decisions:** ה-hook נכנס ל-`settings.json` המשותף (נכנס ל-git) ולא ל-`settings.local.json` — כי האכיפה צריכה להיות זהה לכל המפתחים בפרויקט.
+- **Notes / Caveats:** ייתכן שצריך לפתוח `/hooks` פעם אחת או לעשות restart כדי שה-hook יתחיל לרוץ בסשן הנוכחי; בסשנים הבאים — אוטומטי.
+- **Related:** [[claude-config]], [[git-and-repo-setup]], [[obsidian-skills]]
 - **Decisions:**
   - כל קובץ מופה לבעלים אחד מתוך `CLAUDE.md`: ראובן (אינפרא/ניתוב), יעל (תוכן), יובל (ויזואל), חן (מחקר). רוב הקבצים הם של ראובן כי כל מה שקיים כיום הוא אינפרא.
   - השתמשתי בקיבוץ "קובץ אחד לנושא" ולא "קובץ אחד לכל קובץ פיזי" — זה התקן של הפרוטוקול. קבצים מקובצים נכנסים לטבלת **קבצים בנושא** בכל topic.

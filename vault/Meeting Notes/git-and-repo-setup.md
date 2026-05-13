@@ -47,3 +47,14 @@ tags: [git, github, infra, auth]
 - **Decisions:** רק `skills/` הועתק — `commands/` ו-`agents/` לא קיימים ב-repo המקור. השימוש ב-`cp -Rn` שמר על קבצים קיימים מדריסה.
 - **Notes / Caveats:** טוקן ה-PAT עדיין לא בוטל; הקומיט עבר בהצלחה (`7f63e6f..3aebbe8`).
 - **Related:** [[superpowers-skills]], [[claude-config]]
+
+### 2026-05-13 — פוש env + Obsidian setup + hook [shipped]
+- **What was done:** שני קומיטים נדחפו ל-`origin/main`:
+  - `88114af` — `.env.example` + עדכון `.gitignore` (חוסם `.env*`).
+  - `385471c` — `.obsidian/{app,appearance,core-plugins,graph}.json`, 3 סקילי Obsidian, `.claude/settings.json` עם ה-hook, ו-`vault/` (11 קבצי MD). `.gitignore` עודכן לחסום את `.obsidian/workspace.json` כי זה state אישי לכל user.
+- **Decisions:**
+  - **פיצול לשני קומיטים:** env לחוד (היה תלוי משיחה קודמת), ו-Obsidian setup לחוד — concerns שונים, היסטוריה ברורה יותר.
+  - **`.obsidian/workspace.json` ל-gitignore:** סטנדרט קהילתי של Obsidian — workspace הוא תצוגה אישית.
+  - **Push דרך URL חד-פעמי:** שוב הטוקן `ghp_vQVO...PF6` לא נרשם ב-`.git/config`. אומת ב-`grep` לאחר ה-push.
+- **Notes / Caveats:** הטוקן עדיין לא בוטל ב-GitHub Settings — תזכורת אחרונה לראובן.
+- **Related:** [[environment-variables]], [[obsidian-skills]], [[vault-bootstrap]], [[claude-config]]

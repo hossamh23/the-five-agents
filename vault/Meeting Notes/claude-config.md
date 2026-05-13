@@ -41,3 +41,12 @@ tags: [claude-code, config, infra]
 - **Decisions:** לסמן `settings.local.json` כשאלה פתוחה לעניין git tracking — לא משנים כרגע, רק מסמנים.
 - **Notes / Caveats:** הסקילים נדחפו כבר ל-`origin/main` בקומיט `3aebbe8` — ראה [[git-and-repo-setup]].
 - **Related:** [[team-structure]], [[superpowers-skills]], [[obsidian-skills]], [[git-and-repo-setup]]
+
+### 2026-05-13 — הוספת `.claude/settings.json` עם UserPromptSubmit hook [shipped]
+- **What was done:** נוצר `.claude/settings.json` (משותף, נכנס ל-git — שונה מ-`settings.local.json`) עם hook ב-`UserPromptSubmit` שמזריק system-reminder להפעיל את `obsidian-vault-workflow` לפני כל תגובה. הפלט עבר ולידציה (`jq -e`) ו-round-trip בש"ל.
+- **Decisions:**
+  - מיקום: `.claude/settings.json` ולא `settings.local.json` — כי זו התנהגות שצריכה להיות זהה לכל המפתחים/הסוכנים בפרויקט, לא מקומית.
+  - שיטה: `printf` של JSON סטטי עם `hookSpecificOutput.additionalContext` — לא דורש סקריפט חיצוני, אין תלויות.
+  - הפעלה: `UserPromptSubmit` (לא `SessionStart`) — כל הודעה ממשתמש מקבלת תזכורת, לא רק תחילת סשן.
+- **Notes / Caveats:** ה-watcher של Claude Code מגלה את הקובץ רק כש-`.claude/` היה חי בתחילת הסשן — ייתכן שנדרש לפתוח `/hooks` פעם אחת או לעשות restart כדי שהוק יתחיל לרוץ בסשן הזה. בסשנים הבאים — אוטומטי.
+- **Related:** [[vault-bootstrap]], [[obsidian-skills]], [[git-and-repo-setup]]

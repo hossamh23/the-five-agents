@@ -45,3 +45,8 @@ tags: [env, secrets, infra, gitignore]
 - **Decisions:** ה-placeholders שנבחרו (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GITHUB_TOKEN`, `NODE_ENV`) הם ניחוש על בסיס סוג הפרויקט — לא על בסיס קוד קיים שצורך אותם. ראובן יעדכן כשייכתב קוד אמיתי.
 - **Notes / Caveats:** הקבצים האלה עדיין **לא** נדחפו ל-GitHub (החלטה של ראובן להמתין).
 - **Related:** [[git-and-repo-setup]], [[claude-config]]
+
+### 2026-05-13 — דחיפה של `.env.example` ו-`.gitignore` ל-GitHub [shipped]
+- **What was done:** קומיט `88114af` עם `.env.example` + עדכון ה-`.gitignore` נדחף ל-`origin/main`. `.env` עצמו נשאר מחוץ ל-git כצפוי.
+- **Decisions:** קומיט קצר וממוקד — `.env*` בלבד, נפרד מ-Obsidian setup שירוץ אחריו.
+- **Related:** [[git-and-repo-setup]]
