@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/hossam/Downloads/workspace/the-five-agents/.claude/agents /Users/hossam/Downloads/workspace/the-five-agents/.claude/skills /Users/hossam/Downloads/workspace/the-five-agents/.claude/commands)"
+    ]
+  }
+}
