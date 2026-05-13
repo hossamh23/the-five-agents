@@ -15,4 +15,4 @@ folder: Publishing Log
 
 ## Topics
 
-- _none yet_ — עדיין לא פורסם כלום.
+- [[maamar-crm]] — שכתוב מאמר CRM (1557→1344 מילים, `[shipped]` 2026-05-13)

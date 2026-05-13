@@ -17,8 +17,15 @@
 תחת `.claude/` יושבת התשתית שלי ושל הצוות:
 
 - `agents/` — הגדרות הסוכנים בצוות שלי (יעל, יובל, חן).
-- `skills/` — יכולות מותאמות שהצוות יכול להשתמש בהן.
+- `skills/` — יכולות מותאמות שהצוות יכול להשתמש בהן (כולל `gpt-image-gen` ל-OpenAI Images API).
 - `commands/` — פקודות מותאמות להפעלת תהליכים חוזרים.
+
+בשורש הפרויקט, תיקיות עבודה של הסוכנים:
+
+- `yael/` — `style-guide.md` + `reference/` (דוגמאות לסגנון כתיבה).
+- `yuval/` — `style-guide.md` + `reference/` (תמונות השראה) + `outputs/` (PNG-ים שיובל יצר).
+- `Content/` — מאמרי גלם ל-flow השכתוב של יעל.
+- `Output/` — תוצרים סופיים של יעל (md + html). אחרי merge עם תמונות יושב גם תיקיית `<article>-images/`.
 
 ## הוראות ניתוב
 
@@ -26,12 +33,13 @@
 
 | סוג בקשה | סוכן/ים | הערה |
 |---|---|---|
-| כתיבה, עריכה, ניסוח, כותרות, microcopy | `yael` | אם דרושות עובדות → קודם `chen`, אחר כך `yael`. |
-| רעיון ויזואלי, יצירת תמונה, פלטה, טיפוגרפיה | `yuval` | מקבל בריף מ-`yael` כשהתוכן הטקסטואלי מוכן. |
+| שכתוב מאמר מ-`Content/` ל-`Output/` (md + html) | `yael` | flow קבוע. יעל קוראת `yael/style-guide.md` ו-`yael/reference/` בתחילת הסשן. אם דרושות עובדות → קודם `chen`. |
+| כתיבה, עריכה, ניסוח, תרגום, סיכום, microcopy (לא flow מקובע) | `yael` | אם דרושות עובדות → קודם `chen`, אחר כך `yael`. |
+| יצירת תמונה דרך `gpt-image-2` (OpenAI) | `yuval` | יובל סורק `yuval/reference/` + קורא `yuval/style-guide.md`. שומר ב-`yuval/outputs/<YYYY-MM-DD>-<slug>.png` + sidecar `.txt` של ה-prompt. |
 | מחקר, אימות עובדות, איסוף מקורות, ניתוח קהל/תחרות | `chen` | מחזירה ממצאים אליי; אני מנתב הלאה. |
-| תוכן end-to-end (פוסט + תמונה) | `chen` → `yael` → `yuval` | טור, לא במקביל. כל שלב מאמת לפני המעבר. |
-| החלטת מותג ניסוחית (קול, טון, מילון) | `yael` | |
-| החלטת מותג ויזואלית (פלטה, סגנון, לוגו) | `yuval` | |
+| תוכן end-to-end (מאמר + תמונות) | `yael` → `yuval` (אני ממזג) | יעל משאירה `{{IMAGE_NEEDED}}` placeholders; אני מפעיל יובל לכל placeholder; משלב חזרה ל-`Output/` עם תיקיית `<article>-images/`. ראה Flow למטה. |
+| החלטת מותג ניסוחית (קול, טון, מילון) | `yael` | מתעדת ב-`yael/style-guide.md`. |
+| החלטת מותג ויזואלית (פלטה, סגנון, לוגו) | `yuval` | מתעד ב-`yuval/style-guide.md` או דוגמאות ל-`yuval/reference/`. |
 | תשתית, קוד, קונפיג, git, deploy, סקילים, vault | אני (אין delegation) | |
 | לא ברור / חוצה תחומים | שואל את המשתמש לפני delegation | |
 
@@ -41,3 +49,23 @@
 - **העברת הקשר היא באחריותי.** כשאני מאציל, אני מוסר לסוכן את ה-topic file הרלוונטי וכל פלט קודם של סוכן אחר באותה משימה. לא לסמוך על הסוכן שיגלה לבד.
 - **2+ סוכנים בלי תלות ביניהם** → לשקול `dispatching-parallel-agents` (סקיל מתוך Superpowers).
 - **שאלה read-only טהורה** שלא נוגעת בקבצים ולא מייצרת החלטה → אני עונה ישירות בלי delegation ובלי vault entry.
+
+### מילות מפתח לזיהוי בקשות
+
+הניתוב הסמנטי של Claude Code מבוסס על שדה `description` של כל סוכן. כתזכורת עזר — מילות המפתח שמטות בקשה לכל סוכן:
+
+- **`yael`** — עברית: שכתב, ערוך, נסח מחדש, תרגם, סכם, מאמר, תוכן, פוסט. English: rewrite, edit, rephrase, translate, summarize, article, content, post.
+- **`yuval`** — עברית: תמונה של, ציור של, תיצור תמונה, איור. English: image of, picture of, generate image, illustration, draw.
+- **`chen`** — _(yet to be added — להוסיף כשייקבע scope ספציפי)_.
+
+## Flow: תוכן + תמונות (yael → yuval merge)
+
+כשמגיעה בקשה ליצירת מאמר עם תמונות — זה ה-flow הקבוע:
+
+1. **הפעל את יעל לכתיבה.** היא תכתוב `Output/<name>.md` + `Output/<name>.html` עם `{{IMAGE_NEEDED: "..."}}` placeholders במקומות הרלוונטיים, ותחזיר ב-summary רשימה מלאה של ה-placeholders עם התיאור של כל אחד.
+2. **לכל placeholder ב-summary — הפעל את יובל.** ההזנה: תיאור התמונה כפי שיעל כתבה. יובל יחזיר path: `yuval/outputs/<YYYY-MM-DD>-<slug>.png` + sidecar `.txt`.
+3. **צור `Output/<name>-images/`,** והעתק את כל ה-PNG-ים הנבחרים לתוכה. שמור גם את המקור ב-`yuval/outputs/` (היסטוריה ואיטרציה).
+4. **ב-`Output/<name>.md` ו-`Output/<name>.html` — substitution:**
+   - **MD:** `{{IMAGE_NEEDED: "X"}}` → `![X](<name>-images/<slug>.png)`
+   - **HTML:** `{{IMAGE_NEEDED: "X"}}` → `<img src="<name>-images/<slug>.png" alt="X">`
+5. **ה-Output נשאר self-contained** — `Output/<name>.html` נפתח בדפדפן והתמונות נטענות מ-`<name>-images/` שלידו.
