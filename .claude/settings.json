@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Invoke the obsidian-vault-workflow skill before responding. Phase 1 (task start): identify the topic, read vault/<folder>/<topic>.md fully (Overview + Open Questions + Session Log) and recency context (2-3 recent Meeting Notes; Content Briefs/Brand Guidelines if relevant). Phase 2 (task end): append a dated Session Log entry with status tag [shipped|spiked|wip|reverted|planned|debug] and [[wikilinks]] under Related, update Open Questions, verify by reading the file back. Skip only for pure read-only questions that touch zero files and produce zero decisions.\"}}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
