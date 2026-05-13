@@ -24,8 +24,9 @@
 
 - `yael/` — `style-guide.md` + `reference/` (דוגמאות לסגנון כתיבה).
 - `yuval/` — `style-guide.md` + `reference/` (תמונות השראה) + `outputs/` (PNG-ים שיובל יצר).
-- `Content/` — מאמרי גלם ל-flow השכתוב של יעל.
-- `Output/` — תוצרים סופיים של יעל (md + html). אחרי merge עם תמונות יושב גם תיקיית `<article>-images/`.
+- `chen/Memory/searches.md` — לוג חיפושים של חן (Grep לפני כל חיפוש חדש, למניעת כפילויות 30 יום).
+- `Content/` — מאמרי גלם ל-flow השכתוב של יעל. **חן** מפילה כאן מאמרים שמצאה ברשת (`<YYYY-MM-DD>-<slug>.md` עם source URL בראש), והמשתמש יכול גם להפיל מאמרים ידנית.
+- `Output/` — כל ה-deliverables: מאמרי יעל (`<article>.{md,html}`), תמונות standalone של יובל (`<YYYY-MM-DD>-<slug>.{png,txt}`), ובמקרה של מאמר+תמונה — גם תיקיית `<article>-images/`.
 
 ## הוראות ניתוב
 
@@ -35,7 +36,8 @@
 |---|---|---|
 | שכתוב מאמר מ-`Content/` ל-`Output/` (md + html) | `yael` | flow קבוע. יעל קוראת `yael/style-guide.md` ו-`yael/reference/` בתחילת הסשן. אם דרושות עובדות → קודם `chen`. |
 | כתיבה, עריכה, ניסוח, תרגום, סיכום, microcopy (לא flow מקובע) | `yael` | אם דרושות עובדות → קודם `chen`, אחר כך `yael`. |
-| יצירת תמונה דרך `gpt-image-2` (OpenAI) | `yuval` | יובל סורק `yuval/reference/` + קורא `yuval/style-guide.md`. שומר ב-`yuval/outputs/<YYYY-MM-DD>-<slug>.png` + sidecar `.txt` של ה-prompt. |
+| יצירת תמונה דרך `gpt-image-2` (OpenAI) | `yuval` | יובל סורק `yuval/reference/` + קורא `yuval/style-guide.md`. שומר ב-`yuval/outputs/<YYYY-MM-DD>-<slug>.{png,txt}` (היסטוריה/איטרציה) **וגם מעתיק ל-`Output/<YYYY-MM-DD>-<slug>.{png,txt}`** (ה-deliverable). |
+| חיפוש מאמר/מקור ברשת לקלט של יעל | `chen` | חן מחפשת ב-WebSearch+WebFetch, מסננת לפי איכות, ושומרת ל-`Content/<YYYY-MM-DD>-<slug>.md` עם source URL בראש. בודקת `chen/Memory/searches.md` קודם (Grep, חלון 30 יום) למניעת כפילות. |
 | מחקר, אימות עובדות, איסוף מקורות, ניתוח קהל/תחרות | `chen` | מחזירה ממצאים אליי; אני מנתב הלאה. |
 | תוכן end-to-end (מאמר + תמונות) | `yael` → `yuval` (אני ממזג) | יעל משאירה `{{IMAGE_NEEDED}}` placeholders; אני מפעיל יובל לכל placeholder; משלב חזרה ל-`Output/` עם תיקיית `<article>-images/`. ראה Flow למטה. |
 | החלטת מותג ניסוחית (קול, טון, מילון) | `yael` | מתעדת ב-`yael/style-guide.md`. |
@@ -56,7 +58,7 @@
 
 - **`yael`** — עברית: שכתב, ערוך, נסח מחדש, תרגם, סכם, מאמר, תוכן, פוסט. English: rewrite, edit, rephrase, translate, summarize, article, content, post.
 - **`yuval`** — עברית: תמונה של, ציור של, תיצור תמונה, איור. English: image of, picture of, generate image, illustration, draw.
-- **`chen`** — _(yet to be added — להוסיף כשייקבע scope ספציפי)_.
+- **`chen`** — עברית: חפש, מצא, מחקר, מאמר על, חדש על, מה קורה עם, מקור על. English: search, find, research, article about, latest on, news on, find source.
 
 ## Flow: תוכן + תמונות (yael → yuval merge)
 
@@ -69,3 +71,16 @@
    - **MD:** `{{IMAGE_NEEDED: "X"}}` → `![X](<name>-images/<slug>.png)`
    - **HTML:** `{{IMAGE_NEEDED: "X"}}` → `<img src="<name>-images/<slug>.png" alt="X">`
 5. **ה-Output נשאר self-contained** — `Output/<name>.html` נפתח בדפדפן והתמונות נטענות מ-`<name>-images/` שלידו.
+
+## Flow: end-to-end מהרשת (chen → yael → yuval merge)
+
+כשמגיעה בקשה ליצירת תוכן חדש שמקורו ברשת ("מצא לי מאמר על X" / "תביא לי משהו על Y ושכתב" / "מה קורה עם Z"):
+
+1. **הפעל את חן.** היא תבדוק את `chen/Memory/searches.md` (Grep, חלון 30 יום), תחפש ב-WebSearch, תסנן ב-WebFetch, ותשמור מאמר נבחר ב-`Content/<YYYY-MM-DD>-<slug>.md` עם source URL בראש הקובץ. חן תחזיר: שם הקובץ, 1-2 משפטים על המקור, ולינק למקור המקורי.
+2. **אם הבקשה הייתה רק "מצא לי מאמר"** — עוצרים כאן. מחזיר את התוצר של חן למשתמש. **לא** מפעיל את יעל אוטומטית — זה החלטה של המשתמש.
+3. **אם הבקשה כללה גם שכתוב/פרסום** — ממשיכים אוטומטית:
+   - הפעל את **יעל** על הקובץ של חן. יעל תפיק `Output/<YYYY-MM-DD>-<slug>.{md,html}` עם `{{IMAGE_NEEDED}}` placeholders אם רלוונטי.
+   - אם יעל החזירה placeholders — הפעל את **יובל** לכל אחד מהם (ראה "Flow: תוכן + תמונות" למעלה).
+   - מזג את הכל ב-`Output/` עם תיקיית `<file>-images/`.
+4. **כפילויות (cache hit ב-`chen/Memory/searches.md`)** — אם חן מצאה שכבר חיפשתי את הנושא ב-30 הימים האחרונים, היא **לא** תחפש מחדש בעצמה. היא תחזיר אליי "כבר חיפשתי X בתאריך Y, יש לי את `Content/<filename>.md`. רוצה לעבוד על הקיים או לחפש מחדש?" — ואני שואל את המשתמש לפני שאני מורה לה להמשיך.
+5. **חריגים שמטה תמיד חיפוש מחדש** — נושאים דינמיים (חדשות שבועיות, מחירים, סטטיסטיקות עדכניות, רגולציה). חן ממליצה לחפש מחדש בכל מקרה, אבל ההחלטה הסופית שלי.

@@ -13,7 +13,7 @@ tags: [team, agents, claude-md]
 
 - **יעל** (`yael`) — כותבת תוכן (טקסט, ניסוח, עריכה, התאמה לקהל ופורמט). מוגדרת ב-`.claude/agents/yael.md`.
 - **יובל** (`yuval`) — מעצב תמונות (רעיונות חזותיים, יצירת תמונות, התאמה לתוכן). מוגדר ב-`.claude/agents/yuval.md`.
-- **חן** (`chen`) — חוקרת (איסוף מידע, אימות עובדות, מחקר רקע). מוגדרת ב-`.claude/agents/chen.md`.
+- **חן** (`chen`) — חוקרת הרשת. **v2 (2026-05-13):** מאתרת מאמרים ופיסות תוכן ברשת (WebSearch+WebFetch), מסננת לפי איכות, ושומרת ל-`Content/<YYYY-MM-DD>-<slug>.md` ככניסה לתהליך השכתוב של יעל. שומרת זיכרון חיפושים ב-`chen/Memory/searches.md` (Grep לפני כל חיפוש, חלון 30 יום למניעת כפילות). מוגדרת ב-`.claude/agents/chen.md`.
 
 המוח של ראובן יושב ב-`CLAUDE.md` בשורש הפרויקט. הוא כולל הוראות ניתוב מפורשות (טבלה של "סוג בקשה → סוכן") שמעבירות בקשות לסוכן הנכון. הסוכנים עצמם הם Claude Code subagents קונבנציונליים — הפעלה דרך כלי `Agent` עם `subagent_type`.
 
@@ -41,10 +41,10 @@ tags: [team, agents, claude-md]
 - האם יעל תזדקק אי-פעם ל-WebFetch (להבאת מקור חיצוני שצוטט במאמר המקורי)? כרגע חסום — אם כן, הפתרון הוא delegation ל-`chen`, לא הוספת כלי ליעל.
 - **🐛 Bug לבדיקה:** יעל דיווחה ש-`yael/style-guide.md` לא קיים (במצב smoke test 2026-05-13) — בפועל הוא קיים. לבדוק בסשן הבא (אחרי שה-system prompt טוען yael v2) אם הבעיה ממשיכה. אם כן — אולי הסוכן רואה cwd שונה מהפרויקט, או שצריך לציין נתיב מלא מ-`/Users/.../` ב-system prompt של יעל.
 - "תלמידים שלי" במאמר CRM — הוסר על ידי יעל. דורש אישור סופי. (ראה `vault/Publishing Log/maamar-crm.md`.)
-- **Smoke test ל-flow `yael → yuval → merge`** — לא רץ עדיין; דורש `OPENAI_API_KEY` אמיתי ב-`.env`. כשירוץ — לאמת ש-yuval מצליחה לקרוא ל-`gpt-image-gen` ושראובן עושה substitution נכון ב-md+html.
+- **Smoke test ל-flow `yael → yuval → merge` (המזגן)** — חצי בוצע: יובל לבדה עבדה end-to-end (`2026-05-13-dog.png` נוצרה בקריאה יחידה ל-gpt-image-2). עוד לא נבדק ה-merge השלם של מאמר + תמונות (yael→yuval→Output substitution). דורש מאמר חדש עם `{{IMAGE_NEEDED}}`.
 - **API budget cap** ל-gpt-image-2 — אין כרגע. אם יוצרים הרבה תמונות, צריך מנגנון מעקב/הגבלה.
 - **`yuval/reference/` ריקה** — כל תמונה תסתמך רק על ה-style-guide הכתוב. מתי לזרוע 3–5 תמונות ייחוס?
-- **Chen trigger keywords** ב-CLAUDE.md עדיין חסרות.
+- **Smoke test ל-Chen v2 end-to-end** — דורש סשן חדש (system prompt v2 ייטען רק בהפעלה הבאה). לבדוק "תמצא לי מאמר על Claude Code skills" — לוודא ש-Grep ב-memory עובד, WebSearch→WebFetch מסנן נכון, וקובץ נשמר ב-`Content/<YYYY-MM-DD>-<slug>.md` בפורמט עם source URL.
 
 ## Session Log
 
@@ -119,3 +119,43 @@ tags: [team, agents, claude-md]
   - **persistence של system prompt v1** — כמו בסשן הקודם עם yael, ייתכן ש-yuval בסשן הנוכחי עוד טעון עם v1 (description גנרי, tools כולל Edit). יעבוד נכון רק בסשן הבא.
   - **דופליקציה של PNGs**: `yuval/outputs/` + `Output/<article>-images/` — שתי תיקיות, אותו קובץ. עלות disk קטנה, אבל אם יוצרים הרבה — אולי כדאי symlink.
 - **Related:** [[claude-config]], [[environment-variables]]
+
+### 2026-05-13 — יובל מעתיק תמונות ל-`Output/` (deliverable mirroring) [shipped]
+- **What was done:** ה-flow של יובל הורחב — בנוסף לשמירה ב-`yuval/outputs/<...>.{png,txt}` (היסטוריה/איטרציה), יובל מעתיק עכשיו גם ל-`Output/<...>.{png,txt}` (ה-deliverable ללקוח). שלב `7` (אימות) עודכן ללולאה שבודקת את שני המיקומים. שלב `8` (דיווח) עודכן לכלול את שני ה-paths. גם CLAUDE.md (שורת yuval ב-routing matrix + תיאור מבנה התיקיות) ו-`Output/_index.md` (חלוקה ל-יעל/יובל/merge) ו-`yuval/outputs/_index.md` עודכנו. התמונה הקיימת `2026-05-13-dog.{png,txt}` הועתקה לפועל ל-`Output/`.
+- **Decisions:**
+  - **ההיסטוריה ב-`yuval/outputs/`, ה-deliverable ב-`Output/`.** כפילות מודעת — שני תפקידים שונים. `Output/` נשאר self-contained ונקי; `yuval/outputs/` שומר את כל מה שיובל ניסתה.
+  - **שמות זהים בשני המקומות.** לא משנים את ה-slug במעבר, כדי שיהיה קל לחזור מ-`Output/` ל-מקור.
+  - **תמונות במאמר עם `{{IMAGE_NEEDED}}` עדיין הולכות ל-`Output/<article>-images/`** (לא לשורש Output) — ראובן הוא זה שמעתיק, לא יובל. רק תמונות standalone יושבות בשורש `Output/`.
+- **Notes / Caveats:** הכפילות עולה disk קטן (1.4MB ל-PNG טיפוסי). אם זה הופך לבעיה — לעבור ל-symlink במקום cp.
+- **Related:** [[claude-config]]
+
+### 2026-05-13 — Smoke test ראשון של יובל v2 (gpt-image-2, "תמונה של כלב") [shipped]
+- **What was done:** המשתמש ביקש "תייצר לי תמונה של כלב". ראובן האציל ליובל כפי שצריך. יובל קראה את `yuval/style-guide.md`, ראתה ש-`yuval/reference/` ריקה (דגל), ניסחה prompt באנגלית בפורמט הקבוע (Subject/Composition/Lighting/Medium/Style/Mood/Palette/Aspect/Avoid), קראה ל-API דרך `gpt-image-gen` (curl + jq + base64), שמרה ל-`yuval/outputs/2026-05-13-dog.png` (1.4MB, PNG 1024×1024 RGB) + sidecar `.txt`. קריאה יחידה הצליחה, אין retry. יובל יצרה גם `vault/Brand Guidelines/visual-iterations.md` (topic file חדש) עם Session Log משלה.
+- **Decisions:**
+  - **כלב גנרי = החלטות סגנון אקטיביות.** יובל בחרה: mixed-breed tan-and-white, שוכב על רצפת עץ, אור יום רך מימין, accent יחיד (שמיכה ירוקה `#2E5C4F`), rule-of-thirds, פוקוס רך. אלה לא ברירות מחדל — אלה החלטות סגנון מבוססות `style-guide.md`. כשייהיו references אמיתיות, יובל תחקה אותן במקום להמציא.
+  - **קריאה אחת בלבד.** עלות (~$0.04 ל-medium quality, לא מאומת) — לא הגיוני לבזבז על רטרי אוטומטי.
+- **Notes / Caveats:**
+  - **ה-flow השלם של יובל v2 עובד end-to-end.** Read style-guide → Glob reference → ניסוח prompt → Bash curl → b64 decode → אימות `file` + `wc -c` → sidecar → vault. אין צורך לחכות לסשן הבא ל-system-prompt refresh — Bash וברירת המחדל של v1 הספיקו כי שניהם מאפשרים אותם כלים הדרושים.
+  - **התמונה איכותית** — לא נראית AI-stocky, יש לה character. גם בלי references.
+  - **מה שלא נבדק עדיין:** ה-merge ל-`Output/<article>-images/` (זה צריך מאמר עם `{{IMAGE_NEEDED}}`).
+- **Related:** [[claude-config]]
+
+### 2026-05-13 — Chen v2: מאתרת מאמרים מהרשת ל-`Content/` [shipped]
+- **What was done:**
+  - **`.claude/agents/chen.md` נשכתב לחלוטין** מ-research-analyst (v1: דוחות מחקר ל-`vault/Meeting Notes/` בפורמט TL;DR/ממצאים/מקורות/אזהרות, סולם 🟢🟡🔴) ל-article-sourcer (v2). ה-frontmatter עודכן: description חדש שמתאר "Use for finding articles and source content on the web for Yael to rewrite", trigger keywords עברית+אנגלית מובנים פנימה לטובת semantic routing, tools נשארו `WebSearch, WebFetch, Read, Write, Edit, Glob, Grep`.
+  - **Flow חדש (7 שלבים):** קבלת בקשה → Grep ב-memory למניעת כפילות 30 יום → 2+ שאילתות WebSearch → WebFetch + סינון לפי קריטריונים (✅ ראשוני/מקצועי/עדכני, ❌ אגרגטור/פורום/clickbait/AI-gen/ויקיפדיה כעיקרי/LinkedIn/AI outputs) → שמירה ל-`Content/<YYYY-MM-DD>-<slug>.md` עם frontmatter + blockquote header (`> **Source:** <URL>`, `> **Fetched:**`, `> **Original title:**`) → entry ב-memory → דיווח לראובן.
+  - **`chen/Memory/searches.md` נוצר** — heading + פורמט entry קבוע (`## YYYY-MM-DD HH:MM | <נושא>`, מילות מפתח, שאילתות, מקורות עם ⭐, נבחר, קובץ) + סולם איכות 1-5 כוכבים + הסבר על Grep-before-search.
+  - **`CLAUDE.md` עודכן ב-4 מקומות:** (1) טבלת ניתוב — שורה חדשה "חיפוש מאמר/מקור ברשת לקלט של יעל" מעל שורת ה-fact-checking הקיימת; (2) מילות המפתח של חן הוחלפו מ-placeholder (`yet to be added`) לרשימה מלאה עברית+אנגלית; (3) סעיף Flow חדש "## Flow: end-to-end מהרשת (chen → yael → yuval merge)" בן 5 שלבים שמסביר מתי לעצור אחרי חן (בקשת "מצא בלבד") ומתי להמשיך אוטומטית (בקשת "מצא ושכתב"); (4) "מבנה התיקיות" עודכן עם `chen/Memory/searches.md`.
+  - **`vault/Meeting Notes/team-structure.md`** — הוסר ה-Open Question "Chen trigger keywords עדיין חסרות" (טופל), נוסף Open Question חדש לסמוק-טסט של chen v2.
+- **Decisions:**
+  - **החלפה מלאה ולא coexistence.** אושר ע"י המשתמש ב-AskUserQuestion. ה-research-report v1 (TL;DR/findings/sources/warnings) לא נשאר כ-fallback — אם יידרש בעתיד, ההיסטוריה זמינה ב-git. הסקופ של chen v2 חד וקונקרטי: מאתרת מאמרים, לא אנליסטית.
+  - **Architectural boundary נשמרת**: חן לא קוראת ליעל. רק שמה ב-`Content/` ומדווחת. ראובן הוא ה-router. סיבה: שמירה על תפקיד ה-router היחיד של ראובן, ועל יכולת המשתמש לעצור אחרי כל שלב.
+  - **Memory protocol עם Grep**: לא רוצים schema מורכב או DB — markdown פשוט, חיפוש טקסטואלי, חלון 30 יום מובלע (חן מסתכלת על תאריך ה-entry). חריג: נושאים דינמיים (חדשות, מחירים, סטטיסטיקות) — חן ממליצה לחפש מחדש בכל מקרה.
+  - **פורמט קובץ ב-`Content/`**: frontmatter YAML עם `source/fetched/original_title/original_author/published/language` **וגם** blockquote header בראש הגוף. כפילות מודעת — frontmatter נצרך מכלים, blockquote מודפס כשקוראים את ה-md.
+  - **Trigger keywords כפולים**: ב-frontmatter description (ל-Claude Code semantic routing) **וגם** ב-CLAUDE.md (לטובת ראובן/קוראים). לא DRY אבל סוכנים נטענים מ-frontmatter, וראובן מוכוון מ-CLAUDE.md.
+- **Notes / Caveats:**
+  - **system prompt v1 בסשן הנוכחי**: כמו ב-yael/yuval v2, ה-system prompt של chen v2 ייטען רק בהפעלה הבאה. סמוק-טסט אמיתי דורש סשן חדש.
+  - **`Content/maamar-crm.md` הקיים לא מתוארך** — slight inconsistency עם פורמט החדש (`<YYYY-MM-DD>-<slug>.md`). יעל אוכלת את שניהם, לכן OK.
+  - **ה-`chen/` שונה ממבני `yael/` ו-`yuval/`**: אין `style-guide.md` ואין `reference/` (כי לחן אין סגנון להפיק — היא לא יוצרת, רק מאתרת). רק `Memory/searches.md`.
+  - **לא נוספה allowedDomains** ב-WebFetch — Open Question קיים, יטופל כשייקבע תחום פעילות צר.
+- **Related:** [[claude-config]], [[obsidian-skills]], [[vault-bootstrap]]
