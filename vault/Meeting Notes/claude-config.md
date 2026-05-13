@@ -50,3 +50,9 @@ tags: [claude-code, config, infra]
   - הפעלה: `UserPromptSubmit` (לא `SessionStart`) — כל הודעה ממשתמש מקבלת תזכורת, לא רק תחילת סשן.
 - **Notes / Caveats:** ה-watcher של Claude Code מגלה את הקובץ רק כש-`.claude/` היה חי בתחילת הסשן — ייתכן שנדרש לפתוח `/hooks` פעם אחת או לעשות restart כדי שהוק יתחיל לרוץ בסשן הזה. בסשנים הבאים — אוטומטי.
 - **Related:** [[vault-bootstrap]], [[obsidian-skills]], [[git-and-repo-setup]]
+
+### 2026-05-13 — אימות שה-hook יורה בפועל [shipped]
+- **What was done:** בהודעת המשתמש הבאה אחרי הקומיט, ה-`UserPromptSubmit` hook ירה והזריק את ה-`additionalContext` בדיוק כמתוכנן (ראיתי `<system-reminder>` עם הטקסט המלא שהגדרתי ב-`settings.json`).
+- **Decisions:** אין מה לשנות — הקונפיגורציה עובדת. ה-caveat בכניסה הקודמת ("ייתכן שנדרש לפתוח `/hooks`") התברר כלא רלוונטי במקרה הזה — ה-watcher קלט את הקובץ בלי התערבות.
+- **Notes / Caveats:** עדיין לא נבדק בסשן חדש לגמרי — רק באותו סשן שיצר את הקובץ. סביר שזה יעבוד, אבל מומלץ לאמת בסשן הבא של ראובן.
+- **Related:** [[vault-bootstrap]]
