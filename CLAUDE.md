@@ -26,6 +26,7 @@
 - `yuval/` — `style-guide.md` + `reference/` (תמונות השראה) + `outputs/` (PNG-ים שיובל יצר).
 - `chen/Memory/searches.md` — לוג חיפושים של חן (Grep לפני כל חיפוש חדש, למניעת כפילויות 30 יום).
 - `Content/` — מאמרי גלם ל-flow השכתוב של יעל. **חן** מפילה כאן מאמרים שמצאה ברשת (`<YYYY-MM-DD>-<slug>.md` עם source URL בראש), והמשתמש יכול גם להפיל מאמרים ידנית.
+- `mcp-server/` — שרת MCP מרוחק (TypeScript, Streamable HTTP) שחושף את `Content/`, `Output/`, `vault/` ויצירת תמונות ל-Claude כ-connector. ראה `mcp-server/README.md`. תשתית — אני מטפל בו בלי delegation.
 - `Output/` — כל ה-deliverables: מאמרי יעל (`<article>.{md,html}`), תמונות standalone של יובל (`<YYYY-MM-DD>-<slug>.{png,txt}`), ובמקרה של מאמר+תמונה — גם תיקיית `<article>-images/`.
 
 ## הוראות ניתוב

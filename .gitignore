@@ -3,6 +3,10 @@
 .env.local
 .env.*.local
 
+# MCP server — build output and dependencies
+mcp-server/node_modules/
+mcp-server/dist/
+
 # Obsidian — per-user UI state, should not be shared
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json

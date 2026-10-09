@@ -16,3 +16,4 @@ folder: Meeting Notes
 - [[superpowers-skills]] — 14 הסקילים מ-`obra/superpowers` שהותקנו תחת `.claude/skills/`
 - [[obsidian-skills]] — 3 הסקילים של Obsidian: vault-workflow, markdown, bases
 - [[vault-bootstrap]] — אתחול ה-vault עצמו ויצירת מפת הקבצים הזו
+- [[mcp-server]] — שרת MCP מרוחק (`mcp-server/`) שחושף את Content/Output/vault ויצירת תמונות ל-Claude
